@@ -1,0 +1,17 @@
+---
+bgp_data:
+- R1:
+    bgp_group_name: ix-peer
+    neighbors:
+      R2:
+        description: R2
+        neighbor: 10.0.0.2
+        import_policy: ix-peer
+        export_policy: static-to-bgp
+        peer_as: 200
+      R3:
+        description: R3
+        neighbor: 10.0.1.1
+        import_policy: ix-peer
+        export_policy: static-to-bgp
+        peer_as: 300

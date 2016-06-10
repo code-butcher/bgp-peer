@@ -1,0 +1,23 @@
+{% for bgp_data in item.itervalues() %}
+protocols {
+    bgp {
+        log-updown;
+        group {{ bgp_data.bgp_group_name }} {
+            type external;
+            bfd-liveness-detection {
+                minimum-interval 500;
+                multiplier 3;
+                session-mode single-hop;
+            }
+{% for key, val in bgp_data.neighbors.iteritems() %}
+            neighbor {{ val.neighbor }} {
+                description {{ val.description }};
+                import {{ val.import_policy }};
+                export {{ val.export_policy }};
+                peer-as {{ val.peer_as }};
+            }
+{% endfor %}
+        }
+    }
+}
+{% endfor %}

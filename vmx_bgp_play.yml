@@ -1,0 +1,54 @@
+---
+  - name: vmx bgp push
+    hosts: vmx
+    roles:
+     - Juniper.junos
+    vars:
+      ansible_python_interpreter: "/usr/bin/env python"
+    connection: local
+    gather_facts: no
+
+    vars_prompt:
+     - name: USERNAME
+       prompt: Username
+       private: no
+     - name: DEVICE_PASSWORD
+       prompt: Device password
+       private: yes
+
+    vars_files:
+      - "vmx_bgp_vars.yml"
+
+    tasks:
+    - name: Get Junos device information
+      junos_get_facts:
+        host={{ inventory_hostname }}
+        user={{ USERNAME }}
+        passwd={{ DEVICE_PASSWORD }}
+      register: junos
+
+ #   - name: Print Junos facts
+ #     debug: msg="{{junos.facts}}"
+
+    - name: Install Junos configuration
+      junos_install_config:
+        host={{ inventory_hostname }}
+        user={{ USERNAME }}
+        passwd={{ DEVICE_PASSWORD }}
+        file="R1-bgp-policy.conf"
+        diffs_file="R1diff.log"
+
+#    - name: Debug template
+#      debug: msg="{{item}}"
+#      with_items: "{{bgp_data}}"
+      
+    - name: Create template
+      template: src="vmx_bgp_jinja_template.j2" dest="/home/automation/tech-summit-2015/ansible-demo/bgp-push/R1.conf"
+      with_items: "{{bgp_data}}"
+
+    - name: Install Junos configuration
+      junos_install_config:
+        host={{ inventory_hostname }}
+        user={{ USERNAME }}
+        passwd={{ DEVICE_PASSWORD }}
+        file="R1.conf"
