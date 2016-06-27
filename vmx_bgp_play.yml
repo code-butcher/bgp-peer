@@ -35,15 +35,15 @@
         host={{ inventory_hostname }}
         user={{ USERNAME }}
         passwd={{ DEVICE_PASSWORD }}
-        file="R1-bgp-policy.conf"
-        diffs_file="R1diff.log"
+        file="{{ inventory_hostname }}-bgp-policy.conf"
+        diffs_file="{{ inventory_hostname }}-policy.log"
 
 #    - name: Debug template
 #      debug: msg="{{item}}"
 #      with_items: "{{bgp_data}}"
       
     - name: Create template
-      template: src="vmx_bgp_jinja_template.j2" dest="/home/automation/tech-summit-2015/ansible-demo/bgp-push/R1.conf"
+      template: src="vmx_bgp_jinja_template.j2" dest="/home/automation/tech-summit-2015/ansible-demo/bgp-peer/R1-bgp.conf"
       with_items: "{{bgp_data}}"
 
     - name: Install Junos configuration
@@ -51,4 +51,5 @@
         host={{ inventory_hostname }}
         user={{ USERNAME }}
         passwd={{ DEVICE_PASSWORD }}
-        file="R1.conf"
+        file="{{ inventory_hostname }}-bgp.conf"
+        diffs_file='{{ inventory_hostname }}-bgp.log'
